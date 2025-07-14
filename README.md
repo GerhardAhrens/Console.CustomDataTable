@@ -7,3 +7,31 @@
 
 Wie viele Klassen kann auch vom DataTable als auch vom DataRow abgeleitet werden. Durch diese Ableitung ergeben sich vielefältige Erweiterungsmöglichkeiten.
 
+Verwendung eines Custom DataTable
+```csharp
+MyDataTable table = new MyDataTable();
+table.TableName = "CustomDataTable";
+table.MyDataRowChanged += new MyDataRowChangedDlgt(OnMyDataRowChanged);
+MyDataRow row = table.GetNewRow();
+row.DatumTyp = new DateTime(1960,6,28);
+table.Add(row);
+
+row = table.GetNewRow();
+row.DatumTyp = new DateTime(2025, 7, 14);
+table.Add(row);
+table.AcceptChanges();
+
+MyDataRow row1 = (MyDataRow)table.Rows[1];
+row1.SetField<string>("TextTyp", "Hallo");
+MyDataRow cloneRow = table.Clone(1);
+int count = table.Count;
+table.WriteXml(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.xlm"));
+
+foreach (MyDataRow myRow in table.Rows)
+{
+    DataRowState rowstate = myRow.RowState;
+    Guid colValue = myRow.Field<Guid>("Id");
+    Guid id = myRow.Id;
+    Console.WriteLine($"{colValue}; {id}; Datum: {myRow.DatumTyp}");
+}
+```
