@@ -64,11 +64,15 @@ namespace Console.CustomDataTable
             table.Add(row);
             table.AcceptChanges();
 
+            DataView dv = table.AsDataView(DataViewRowState.CurrentRows);
+            int dvCount = dv.Count;
+
             MyDataRow row1 = (MyDataRow)table.Rows[1];
             row1.SetField<string>("TextTyp", "Hallo");
             MyDataRow cloneRow = table.Clone(1);
             int count = table.Count;
             table.WriteXml(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.xlm"));
+            table.WriteToJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
 
             foreach (MyDataRow myRow in table.Rows)
             {

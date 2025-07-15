@@ -117,6 +117,29 @@ namespace Console.CustomDataTable
             return row;
         }
 
+        public DataView AsDataView()
+        {
+            return new DataView(this);
+        }
+
+        public DataView AsDataView(DataViewRowState rowState)
+        {
+            return new DataView(this,null,null, rowState);
+        }
+
+        public void WriteToJson(string jsonFile)
+        {
+            if (this == null)
+            {
+                return;
+            }
+
+            var data = this.Rows.OfType<DataRow>().Select(row => this.Columns.OfType<DataColumn>().ToDictionary(col => col.ColumnName, c => row[c]));
+
+            string jsonTest = System.Text.Json.JsonSerializer.Serialize(data);
+            File.WriteAllText(jsonFile, jsonTest);
+        }
+
         protected override Type GetRowType()
         {
             return typeof(MyDataRow);
