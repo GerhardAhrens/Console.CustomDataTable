@@ -54,25 +54,50 @@ namespace Console.CustomDataTable
 
             MyDataTable table = new MyDataTable();
             table.TableName = "CustomDataTable";
-            table.MyDataRowChanged += new MyDataRowChangedDlgt(OnMyDataRowChanged);
+            table.MyDataRowChanged += new MyDataRowChanged(OnMyDataRowChanged);
+
             MyDataRow row = table.GetNewRow();
             row.DatumTyp = new DateTime(1960,6,28);
             table.Add(row);
 
             row = table.GetNewRow();
             row.DatumTyp = new DateTime(2025, 7, 14);
+            row.IntTyp = 42;
             table.Add(row);
+
+            DataView dv = table.AsDataView(DataViewRowState.Added);
+            int dvCount = dv.Count;
+
             table.AcceptChanges();
 
-            DataView dv = table.AsDataView(DataViewRowState.CurrentRows);
-            int dvCount = dv.Count;
+            DataView dv0 = table.AsDataView(DataViewRowState.Added);
+            int dv0Count = dv0.Count;
+
+            DataView dv1 = table.AsDataView(DataViewRowState.Unchanged);
+            int dv1Count = dv1.Count;
 
             MyDataRow row1 = (MyDataRow)table.Rows[1];
             row1.SetField<string>("TextTyp", "Hallo");
-            MyDataRow cloneRow = table.Clone(1);
+
+            MyDataRow cloneRow = table.Clone(1, true);
+            cloneRow.TextTyp = "hallo Charlie";
+            table.AcceptChanges();
+
+            MyDataRow clone2Row = table.Clone((MyDataRow)table.Rows[2], true);
+            clone2Row.TextTyp = "hallo Gerhard";
+            clone2Row.DecimalTyp = 88.99M;
+            table.AcceptChanges();
+
             int count = table.Count;
+
+            DataView dv2 = table.AsDataView(rowFilter: "IntTyp = 42");
+            int dv2Count = dv2.Count;
+
             table.WriteXml(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.xlm"));
-            table.WriteToJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
+
+            table.WriteJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
+
+            DataTable dtJson = table.ReadJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
 
             foreach (MyDataRow myRow in table.Rows)
             {
@@ -94,6 +119,8 @@ namespace Console.CustomDataTable
                 throw new ApplicationException("Die Spalte 'TextTyp' muß mit string.Empty initalisiert werden.");
             }
             */
+
+            Console.WriteLine(args.ToString());
         }
     }
 }

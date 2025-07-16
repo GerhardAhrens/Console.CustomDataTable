@@ -18,8 +18,12 @@ namespace Console.CustomDataTable
     using System;
     using System.Data;
     using System.Reflection;
+    using System.Text.Json;
+    using System.Text.RegularExpressions;
 
-    public delegate void MyDataRowChangedDlgt(MyDataTable sender, MyDataRowChangedEventArgs args);
+    using static System.Text.Json.JsonElement;
+
+    public delegate void MyDataRowChanged(MyDataTable sender, MyDataRowChangedEventArgs args);
 
     public class MyDataRowChangedEventArgs
     {
@@ -41,11 +45,16 @@ namespace Console.CustomDataTable
             this.action = action;
             this.row = row;
         }
+
+        public override string ToString()
+        {
+            return $"$Action:{this.Action}; Row Column:{this.Row.ItemArray.Length}";
+        }
     }
 
     public class MyDataTable : DataTable
     {
-        public event MyDataRowChangedDlgt MyDataRowChanged;
+        public event MyDataRowChanged MyDataRowChanged;
 
         public MyDataTable()
         {
@@ -75,6 +84,11 @@ namespace Console.CustomDataTable
         public void Add(MyDataRow row)
         {
             base.Rows.Add(row);
+        }
+
+        public void AddClone(MyDataRow row)
+        {
+            base.ImportRow(row);
         }
 
         public void Remove(MyDataRow row)
@@ -127,7 +141,12 @@ namespace Console.CustomDataTable
             return new DataView(this,null,null, rowState);
         }
 
-        public void WriteToJson(string jsonFile)
+        public DataView AsDataView(string rowFilter = null, string sortColumn = null, DataViewRowState rowState = DataViewRowState.Unchanged)
+        {
+            return new DataView(this, rowFilter, sortColumn, rowState);
+        }
+
+        public void WriteJson(string jsonFilename)
         {
             if (this == null)
             {
@@ -137,7 +156,46 @@ namespace Console.CustomDataTable
             var data = this.Rows.OfType<DataRow>().Select(row => this.Columns.OfType<DataColumn>().ToDictionary(col => col.ColumnName, c => row[c]));
 
             string jsonTest = System.Text.Json.JsonSerializer.Serialize(data);
-            File.WriteAllText(jsonFile, jsonTest);
+            File.WriteAllText(jsonFilename, jsonTest);
+        }
+
+        public DataTable ReadJson(string jsonFilename)
+        {
+            DataTable dataTable = new();
+            if (string.IsNullOrWhiteSpace(jsonFilename))
+            {
+                return dataTable;
+            }
+
+            string jsonString = File.ReadAllText(jsonFilename);
+
+            JsonElement data = JsonSerializer.Deserialize<JsonElement>(jsonString);
+            if (data.ValueKind != JsonValueKind.Array)
+            {
+                return dataTable;
+            }
+
+            ArrayEnumerator dataArray = data.EnumerateArray();
+            JsonElement firstObject = dataArray.First();
+            ObjectEnumerator firstRowObject = firstObject.EnumerateObject();
+            foreach (JsonProperty element in firstRowObject)
+            {
+                dataTable.Columns.Add(element.Name);
+            }
+
+            foreach (JsonElement obj in dataArray)
+            {
+                ObjectEnumerator objProperties = obj.EnumerateObject();
+                DataRow newRow = dataTable.NewRow();
+                foreach (JsonProperty item in objProperties)
+                {
+                    newRow[item.Name] = item.Value;
+                }
+
+                dataTable.Rows.Add(newRow);
+            }
+
+            return dataTable;
         }
 
         protected override Type GetRowType()
