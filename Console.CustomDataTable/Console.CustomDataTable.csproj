@@ -9,4 +9,8 @@
     <FileVersion>1.0.2025.1</FileVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.CodeDom" Version="9.0.7" />
+  </ItemGroup>
+
 </Project>

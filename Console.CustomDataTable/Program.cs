@@ -30,6 +30,7 @@ namespace Console.CustomDataTable
             {
                 Console.Clear();
                 Console.WriteLine("1. Custom DataTable");
+                Console.WriteLine("2. Create Source von DataTable / Column Struktur");
                 Console.WriteLine("X. Beenden");
                 Console.WriteLine("Wählen Sie einen Menüpunkt oder 'x' für beenden");
                 ConsoleKey key = Console.ReadKey(true).Key;
@@ -43,6 +44,10 @@ namespace Console.CustomDataTable
                     {
                         MenuPoint1();
                     }
+                    else if (key == ConsoleKey.D2)
+                    {
+                        MenuPoint2();
+                    }
                 }
             }
             while (true);
@@ -55,6 +60,8 @@ namespace Console.CustomDataTable
             MyDataTable table = new MyDataTable();
             table.TableName = "CustomDataTable";
             table.MyDataRowChanged += new MyDataRowChanged(OnMyDataRowChanged);
+
+            string result = table.DataTableToCode();
 
             MyDataRow row = table.GetNewRow();
             row.DatumTyp = new DateTime(1960,6,28);
@@ -106,6 +113,21 @@ namespace Console.CustomDataTable
                 Guid id = myRow.Id;
                 Console.WriteLine($"{colValue}; {id}; Datum: {myRow.DatumTyp}");
             }
+
+            Console.WriteLine("eine Taste drücken für zurück!");
+            Console.ReadKey();
+        }
+
+        private static void MenuPoint2()
+        {
+            Console.Clear();
+
+            MyDataTable table = new MyDataTable();
+            table.TableName = "CustomDataTable";
+
+            string result = table.DataTableToCode();
+
+            Console.WriteLine($"Klasse {result} erstellt");
 
             Console.WriteLine("eine Taste drücken für zurück!");
             Console.ReadKey();
