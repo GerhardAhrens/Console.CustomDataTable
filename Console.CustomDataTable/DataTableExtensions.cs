@@ -85,9 +85,9 @@ namespace Console.CustomDataTable
         private static CodeMemberField CreateProperty(string name, Type type)
         {
             // Mit diesem Trick können Auto-Prperties erstellt werden
-            // Automatisch wird am Satement-Ende ein Semikolon angehängt,
+            // Automatisch wird am Statement-Ende ein Semikolon angehängt,
             // dass später wieder entfernt werden muss
-            string memberName = name + "\t{ get; set; }//";
+            string memberName = $"{name}\t{{ get; set; }}//";
 
             CodeMemberField result = new CodeMemberField(type, memberName);
             result.Attributes = MemberAttributes.Public | MemberAttributes.Final;
