@@ -58,12 +58,27 @@ namespace Console.CustomDataTable
 
         public MyDataTable()
         {
-            PropertyInfo[] piArray = this.GetRowType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            PropertyInfo[] piArray = this.GetRowType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => p.DeclaringType == this.GetRowType())
+                .ToArray();
+
             foreach (PropertyInfo pinfo in piArray)
             {
                 if (pinfo.DeclaringType.Name == this.GetRowType().Name)
                 {
-                    base.Columns.Add(new DataColumn(pinfo.Name, pinfo.PropertyType));
+                    if (Nullable.GetUnderlyingType(pinfo.PropertyType) == null)
+                    {
+                        DataColumn dc = new DataColumn(pinfo.Name, pinfo.PropertyType);
+                        dc.AllowDBNull = false;
+                        base.Columns.Add(dc);
+                    }
+                    else
+                    {
+                        DataColumn dc = new DataColumn(pinfo.Name, Nullable.GetUnderlyingType(pinfo.PropertyType));
+                        dc.AllowDBNull = true;
+                        base.Columns.Add(dc);
+                    }
                 }
             }
         }

@@ -68,8 +68,10 @@ namespace Console.CustomDataTable
             table.Add(row);
 
             row = table.GetNewRow();
+            row.TextTyp = "Hallo World";
             row.DatumTyp = new DateTime(2025, 7, 14);
             row.IntTyp = 42;
+            row.NullIntTyp = null;
             table.Add(row);
 
             DataView dv = table.AsDataView(DataViewRowState.Added);
@@ -144,5 +146,20 @@ namespace Console.CustomDataTable
 
             Console.WriteLine(args.ToString());
         }
+    }
+
+    public class CustomDataTableTableAsClass : System.Data.DataRow
+    {
+        public CustomDataTableTableAsClass(System.Data.DataRowBuilder builder) : base(builder)
+        {
+            this.Id = Guid.NewGuid();
+        }
+        public System.Guid Id { get; set; }
+        public string TextTyp { get; set; }
+        public System.DateTime DatumTyp { get; set; }
+        public double DoubleTyp { get; set; }
+        public decimal DecimalTyp { get; set; }
+        public int IntTyp { get; set; }
+        public System.Nullable<int> NullIntTyp { get; set; }
     }
 }

@@ -20,6 +20,17 @@ namespace Console.CustomDataTable
 
     public class MyDataRow : DataRow
     {
+        internal MyDataRow(DataRowBuilder builder) : base(builder)
+        {
+            this.Id = Guid.NewGuid();
+            this.TextTyp = string.Empty;
+            this.DatumTyp = new DateTime(1900, 1, 1, 0, 0, 0, 0);
+            this.DoubleTyp = 0.0;
+            this.DecimalTyp = 0.0M;
+            this.IntTyp = 0;
+            this.NullIntTyp = null;
+        }
+
         public Guid Id
         {
             get { return (Guid)base["Id"]; }
@@ -56,21 +67,10 @@ namespace Console.CustomDataTable
             set { base["IntTyp"] = value; }
         }
 
-        public int NullIntTyp
+        public int? NullIntTyp
         {
             get { return (int)base["NullIntTyp"]; }
             set { base["NullIntTyp"] = value; }
-        }
-
-        internal MyDataRow(DataRowBuilder builder) : base(builder)
-        {
-            this.Id = Guid.NewGuid();
-            this.TextTyp = string.Empty;
-            this.DatumTyp = new DateTime(1900, 1, 1, 0, 0, 0, 0);
-            this.DoubleTyp = 0.0;
-            this.DecimalTyp = 0.0M;
-            this.IntTyp = 0;
-            this.NullIntTyp = int.MinValue;
         }
     }
 }

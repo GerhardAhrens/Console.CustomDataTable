@@ -3,7 +3,7 @@
 ![NET](https://img.shields.io/badge/NET-8.0-green.svg)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![VS2022](https://img.shields.io/badge/Visual%20Studio-2022-white.svg)
-![Version](https://img.shields.io/badge/Version-1.0.2025.1-yellow.svg)]
+![Version](https://img.shields.io/badge/Version-1.0.2025.1-yellow.svg)
 
 Wie viele Klassen kann auch vom DataTable als auch vom DataRow abgeleitet werden. Durch diese Ableitung ergeben sich vielefältige Erweiterungsmöglichkeiten.
 
@@ -55,3 +55,32 @@ table.WriteJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
 ```csharp
 DataTable dtJson = table.ReadJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
 ```
+
+# Source Generator
+In diesem beispiel wird auch ein Source Generator verwendet. Dieser erstellt automatisch die Custom DataRow Klasse, welche von der Custom DataTable Klasse verwendet wird. Es muss nur die Custom DataTable Klasse erstellt werden und der Source Generator erstellt automatisch die Custom DataRow Klasse.
+```csharp
+string result = table.DataTableToCode();
+```
+
+Ergebnis des Source Generator
+```csharp
+public class CustomDataTableTableAsClass : DataRow
+{
+    public CustomDataTableTableAsClass(DataRowBuilder builder) : base(builder)
+    {
+        this.Id = Guid.NewGuid();
+    }
+    public System.Guid Id { get; set; }
+    public string TextTyp { get; set; }
+    public System.DateTime DatumTyp { get; set; }
+    public double DoubleTyp { get; set; }
+    public decimal DecimalTyp { get; set; }
+    public int IntTyp { get; set; }
+    public System.Nullable<int> NullIntTyp { get; set; }
+}
+```
+
+# Versionshistorie
+
+![Version](https://img.shields.io/badge/Version-1.0.2025.1-yellow.svg)
+- Migration auf NET 10
