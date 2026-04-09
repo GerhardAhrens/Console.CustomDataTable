@@ -30,7 +30,8 @@ namespace Console.CustomDataTable
             {
                 Console.Clear();
                 Console.WriteLine("1. Custom DataTable");
-                Console.WriteLine("2. Create Source von DataTable / Column Struktur");
+                Console.WriteLine("2. Create Source von DataTable / Column Struktur mit CodeDom");
+                Console.WriteLine("3. Create Source für DefaultClasse mit CodeDom");
                 Console.WriteLine("X. Beenden");
                 Console.WriteLine("Wählen Sie einen Menüpunkt oder 'x' für beenden");
                 ConsoleKey key = Console.ReadKey(true).Key;
@@ -48,6 +49,10 @@ namespace Console.CustomDataTable
                     {
                         MenuPoint2();
                     }
+                    else if (key == ConsoleKey.D3)
+                    {
+                        MenuPoint3();
+                    }
                 }
             }
             while (true);
@@ -60,8 +65,6 @@ namespace Console.CustomDataTable
             MyDataTable table = new MyDataTable();
             table.TableName = "CustomDataTable";
             table.MyDataRowChanged += new MyDataRowChanged(OnMyDataRowChanged);
-
-            string result = table.DataTableToCode();
 
             MyDataRow row = table.GetNewRow();
             row.DatumTyp = new DateTime(1960,6,28);
@@ -135,6 +138,18 @@ namespace Console.CustomDataTable
             Console.ReadKey();
         }
 
+        private static void MenuPoint3()
+        {
+            Console.Clear();
+
+            string result = "MyDefaultClass".DefaultClassToCode();
+
+            Console.WriteLine($"Klasse {result} erstellt");
+
+            Console.WriteLine("eine Taste drücken für zurück!");
+            Console.ReadKey();
+        }
+
         private static void OnMyDataRowChanged(MyDataTable sender, MyDataRowChangedEventArgs args)
         {
             /*
@@ -148,18 +163,29 @@ namespace Console.CustomDataTable
         }
     }
 
-    public class CustomDataTableTableAsClass : System.Data.DataRow
+    public class MyDefaultClass
     {
-        public CustomDataTableTableAsClass(System.Data.DataRowBuilder builder) : base(builder)
+        public MyDefaultClass()
         {
-            this.Id = Guid.NewGuid();
         }
-        public System.Guid Id { get; set; }
-        public string TextTyp { get; set; }
-        public System.DateTime DatumTyp { get; set; }
-        public double DoubleTyp { get; set; }
-        public decimal DecimalTyp { get; set; }
-        public int IntTyp { get; set; }
-        public System.Nullable<int> NullIntTyp { get; set; }
+        public override string ToString()
+        {
+            return "Hallo aus der generierten Klasse";
+        }
+        public string GetInfo1()
+        {
+            return "Hallo aus der generierten Klasse";
+        }
+        public ResultInfo GetInfo2()
+        {
+            ResultInfo res = new ResultInfo();
+            res.Name = "Inhalt gefüllt via CodeDom";
+            return res;
+        }
+    }
+
+    public class ResultInfo()
+    {
+        public string Name { get; set; }
     }
 }

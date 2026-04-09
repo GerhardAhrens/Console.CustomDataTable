@@ -7,6 +7,13 @@
 
 Wie viele Klassen kann auch vom DataTable als auch vom DataRow abgeleitet werden. Durch diese Ableitung ergeben sich vielefältige Erweiterungsmöglichkeiten.
 
+Das Beispielprojekt zeigt die Möglichkeiten einer Custom DataTable und einer Custom DataRow auf. Es werden auch einige Erweiterungsmethoden gezeigt, welche die Arbeit mit DataTables und DataRows erleichtern.
+
+## Zwei Aspekte werden in diesem Beispielprojekt gezeigt
+
+ - Erstellen einer Custom DataTable und einer Custom DataRow
+ - Extension Methods für System.CodeDom.Compiler zum generieren von Code aus einem DataTable
+
 **Erstellen einer Custom DataTable**
 ```csharp
 MyDataTable table = new MyDataTable();
@@ -56,7 +63,7 @@ table.WriteJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
 DataTable dtJson = table.ReadJson(Path.Combine(AppContext.BaseDirectory, "TestCustomTable.json"));
 ```
 
-# Source Generator
+## Source Generator
 In diesem beispiel wird auch ein Source Generator verwendet. Dieser erstellt automatisch die Custom DataRow Klasse, welche von der Custom DataTable Klasse verwendet wird. Es muss nur die Custom DataTable Klasse erstellt werden und der Source Generator erstellt automatisch die Custom DataRow Klasse.
 ```csharp
 string result = table.DataTableToCode();
@@ -64,23 +71,63 @@ string result = table.DataTableToCode();
 
 Ergebnis des Source Generator
 ```csharp
-public class CustomDataTableTableAsClass : DataRow
+public class CustomDataTableTableAsClass : System.Data.DataRow
 {
-    public CustomDataTableTableAsClass(DataRowBuilder builder) : base(builder)
+    public CustomDataTableTableAsClass(System.Data.DataRowBuilder builder) : base(builder)
     {
         this.Id = Guid.NewGuid();
     }
-    public System.Guid Id { get; set; }
-    public string TextTyp { get; set; }
-    public System.DateTime DatumTyp { get; set; }
-    public double DoubleTyp { get; set; }
-    public decimal DecimalTyp { get; set; }
-    public int IntTyp { get; set; }
-    public System.Nullable<int> NullIntTyp { get; set; }
+
+    public System.Guid Id	{ get; set; }
+    public string TextTyp	{ get; set; }
+    public System.DateTime DatumTyp	{ get; set; }
+    public double DoubleTyp	{ get; set; }
+    public decimal DecimalTyp	{ get; set; }
+    public int IntTyp	{ get; set; }
+    public System.Nullable<int> NullIntTyp	{ get; set; }
+
+    public override string ToString()
+    {
+        return "Hallo aus der generierten Klasse";
+    }
 }
 ```
+
+Im Prinzip kann mit dem CodeDom Compiler Code jede Form con Klassen generiert werden. Es muss nur die entsprechende Logik im Source Generator erstellt werden.
+
+**Eine Default Klasse**\
+Generierte Klassen könne wie hier gezeigt auch eine gewisse Komplexität haben.
+```csharp
+ public class MyDefaultClass
+{
+    public MyDefaultClass()
+    {
+    }
+    public override string ToString()
+    {
+        return "Hallo aus der generierten Klasse";
+    }
+    public string GetInfo1()
+    {
+        return "Hallo aus der generierten Klasse";
+    }
+    public ResultInfo GetInfo2()
+    {
+        ResultInfo res = new ResultInfo();
+        res.Name = "Inhalt gefüllt via CodeDom";
+        return res;
+    }
+}
+
+public class ResultInfo()
+{
+    public string Name { get; set; }
+}
+```
+</br>
 
 # Versionshistorie
 
 ![Version](https://img.shields.io/badge/Version-1.0.2025.1-yellow.svg)
 - Migration auf NET 10
+- Extensions für die Verwendung des CodeDom Generators hinzugefügt

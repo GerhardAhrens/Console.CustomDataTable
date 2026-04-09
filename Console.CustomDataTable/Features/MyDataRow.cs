@@ -70,7 +70,17 @@ namespace Console.CustomDataTable
         public int? NullIntTyp
         {
             get { return (int)base["NullIntTyp"]; }
-            set { base["NullIntTyp"] = value; }
+            set 
+            { 
+                if (value == null)
+                {
+                    base["NullIntTyp"] = DBNull.Value;
+                }
+                else
+                {
+                    base["NullIntTyp"] = value;
+                }
+            }
         }
     }
 }
