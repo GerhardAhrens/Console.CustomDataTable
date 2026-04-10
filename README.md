@@ -93,38 +93,7 @@ public class CustomDataTableTableAsClass : System.Data.DataRow
 }
 ```
 
-Im Prinzip kann mit dem CodeDom Compiler Code jede Form con Klassen generiert werden. Es muss nur die entsprechende Logik im Source Generator erstellt werden.
-
-**Eine Default Klasse**\
-Generierte Klassen könne wie hier gezeigt auch eine gewisse Komplexität haben.
-```csharp
- public class MyDefaultClass
-{
-    public MyDefaultClass()
-    {
-    }
-    public override string ToString()
-    {
-        return "Hallo aus der generierten Klasse";
-    }
-    public string GetInfo1()
-    {
-        return "Hallo aus der generierten Klasse";
-    }
-    public ResultInfo GetInfo2()
-    {
-        ResultInfo res = new ResultInfo();
-        res.Name = "Inhalt gefüllt via CodeDom";
-        return res;
-    }
-}
-
-public class ResultInfo()
-{
-    public string Name { get; set; }
-}
-```
-</br>
+Im Prinzip kann mit dem CodeDom Compiler Code jede Form von Klassen generiert werden. Es muss nur die entsprechende Logik im Source Generator erstellt werden.
 
 # Versionshistorie
 

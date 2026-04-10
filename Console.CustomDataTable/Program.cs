@@ -31,7 +31,6 @@ namespace Console.CustomDataTable
                 Console.Clear();
                 Console.WriteLine("1. Custom DataTable");
                 Console.WriteLine("2. Create Source von DataTable / Column Struktur mit CodeDom");
-                Console.WriteLine("3. Create Source für DefaultClasse mit CodeDom");
                 Console.WriteLine("X. Beenden");
                 Console.WriteLine("Wählen Sie einen Menüpunkt oder 'x' für beenden");
                 ConsoleKey key = Console.ReadKey(true).Key;
@@ -48,10 +47,6 @@ namespace Console.CustomDataTable
                     else if (key == ConsoleKey.D2)
                     {
                         MenuPoint2();
-                    }
-                    else if (key == ConsoleKey.D3)
-                    {
-                        MenuPoint3();
                     }
                 }
             }
@@ -138,18 +133,6 @@ namespace Console.CustomDataTable
             Console.ReadKey();
         }
 
-        private static void MenuPoint3()
-        {
-            Console.Clear();
-
-            string result = "MyDefaultClass".DefaultClassToCode();
-
-            Console.WriteLine($"Klasse {result} erstellt");
-
-            Console.WriteLine("eine Taste drücken für zurück!");
-            Console.ReadKey();
-        }
-
         private static void OnMyDataRowChanged(MyDataTable sender, MyDataRowChangedEventArgs args)
         {
             /*
@@ -161,31 +144,5 @@ namespace Console.CustomDataTable
 
             Console.WriteLine(args.ToString());
         }
-    }
-
-    public class MyDefaultClass
-    {
-        public MyDefaultClass()
-        {
-        }
-        public override string ToString()
-        {
-            return "Hallo aus der generierten Klasse";
-        }
-        public string GetInfo1()
-        {
-            return "Hallo aus der generierten Klasse";
-        }
-        public ResultInfo GetInfo2()
-        {
-            ResultInfo res = new ResultInfo();
-            res.Name = "Inhalt gefüllt via CodeDom";
-            return res;
-        }
-    }
-
-    public class ResultInfo()
-    {
-        public string Name { get; set; }
     }
 }
